@@ -5,7 +5,7 @@ from pathlib import Path
 FILE_PATH = Path(__file__).parent / 'data' / 'products_for_one_day.parquet'
 
 @asset(
-    descritpion="This assets allow to extract the products from the parquet file",
+    description="This assets allow to extract the products from the parquet file",
     io_manager_key="io_manager"
 )
 def extract_raw_products() -> pl.DataFrame:
@@ -13,7 +13,7 @@ def extract_raw_products() -> pl.DataFrame:
 
 
 @asset(
-    descritpion="This assets allow to get the products that are not out of the stock",
+    description="This assets allow to get the products that are not out of the stock",
     io_manager_key="io_manager"
 )
 def no_out_of_stock_products(extract_raw_products:pl.DataFrame) -> pl.DataFrame:
@@ -26,8 +26,8 @@ def no_out_of_stock_products(extract_raw_products:pl.DataFrame) -> pl.DataFrame:
 )
 def wrong_date_type_products(extract_raw_products:pl.DataFrame) -> pl.DataFrame:
     return extract_raw_products.filter(
-        (pl.col("boxNumber").str.stars_with("F")& (pl.col("date_type") != "DLC")) |
-        (pl.col("boxNumber").str.stars_with("S") & (pl.col("date_type") != "DDM"))
+        (pl.col("boxNumber").str.starts_with("F")& (pl.col("date_type") != "DLC")) |
+        (pl.col("boxNumber").str.starts_with("S") & (pl.col("date_type") != "DDM"))
     )
 
 @asset(
@@ -40,5 +40,5 @@ def incorrect_pricing_products(extract_raw_products:pl.DataFrame) -> pl.DataFram
         (pl.col("newPrice") <= 0) |
         (pl.col("newPrice") > pl.col("oldPrice")) |
         ((pl.col("oldPrice") - pl.col("newPrice")) < 0) |
-        (pl.col("unit_quantity") <= 0)
+        (pl.col("unitQuantity") <= 0)
     )
