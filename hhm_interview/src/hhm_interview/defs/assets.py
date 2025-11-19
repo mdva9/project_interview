@@ -7,7 +7,12 @@ FILE_PATH = Path(__file__).parent / 'data' / 'products_for_one_day.parquet'
 @asset(
     descritpion="This assets allow to extract the products from the parquet file"
 )
-def extract_raw_products():
+def extract_raw_products() -> pl.DataFrame:
     return pl.read_parquet(FILE_PATH)
 
 
+@asset(
+    descritpion="This assets allow to get the products that are not out of the stock"
+)
+def no_out_of_stock_products(extract_raw_products:pl.DataFrame) -> pl.DataFrame:
+    return extract_raw_products.filter(pl.col("quantity") > 0)
