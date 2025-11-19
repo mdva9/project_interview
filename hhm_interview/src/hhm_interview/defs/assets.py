@@ -26,3 +26,15 @@ def wrong_date_type_products(extract_raw_products:pl.DataFrame) -> pl.DataFrame:
         (pl.col("boxNumber").str.stars_with("F")& (pl.col("date_type") != "DLC")) |
         (pl.col("boxNumber").str.stars_with("S") & (pl.col("date_type") != "DDM"))
     )
+
+@asset(
+    description="This assets allow to get products with incoherent pricing based on "
+                "unit_quantity, oldPrice and newPrice"
+)
+def incorrect_pricing_products(extract_raw_products:pl.DataFrame) -> pl.DataFrame:
+    return extract_raw_products.filter(
+        (pl.col("newPrice") <= 0) |
+        (pl.col("newPrice") > pl.col("oldPrice")) |
+        ((pl.col("oldPrice") - pl.col("newPrice")) < 0) |
+        (pl.col("unit_quantity") <= 0)
+    )
