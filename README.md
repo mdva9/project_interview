@@ -87,7 +87,7 @@ uv run pytest hhm_interview/tests/test_materialization.py
 ## Pipeline Execution
 These commands allow you to execute the pipeline in two different ways.
 ```bash
-cd dagster_project/
+cd hhm_interview/
 ```
 
 ### Dagit UI
